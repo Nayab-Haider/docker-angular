@@ -1,0 +1,29 @@
+version: '3.7'
+services:
+  do-proh2r:
+    image: do-proh2r
+    volumes:
+      - ./proh2r:/app
+      - /app/node_modules
+    ports:
+      - "4200:4200"
+    command: "ng serve --port 4200 --host 0.0.0.0 --public-host=\"http://0.0.0.0:4200\" --disable-host-check"
+  do-proh2radmin:
+    image: do-proh2radmin
+    volumes:
+      - ./proh2radmin:/app
+      - /app/node_modules
+    ports:
+      - "4201:4201"
+    command: "ng serve --port 4201 --host 0.0.0.0 --public-host=\"http://0.0.0.0:4201\" --base-href /two/ --disable-host-check"
+  do-nginx:
+    image: do-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/etc/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/etc/conf.d/nginx.dev.conf:/etc/nginx/conf.d/default.conf
+    command: ["nginx", "-g", "daemon off;"]
+    links:
+      - do-proh2r
+      - do-proh2radmin
